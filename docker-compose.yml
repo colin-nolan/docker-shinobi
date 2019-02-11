@@ -1,0 +1,38 @@
+version: "3.2"
+
+services:
+    shinobi:
+        build:
+            context: ./shinobi
+        image: shinobi
+        restart: always
+        volumes:
+          - type: bind
+            source: "${SHINOBI_CONFIG_LOCATION:-./shinobi/config.default.json}"
+            target: /mnt/host/conf.json
+            read_only: true
+        environment:
+            MYSQL_HOST: database
+            MYSQL_PORT: "3306"
+            MYSQL_USER: "${MYSQL_USER_NAME:-shinobi}"
+            MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+            MYSQL_DATABASE: "${MYSQL_DATABASE:-shinobi}"
+        depends_on:
+            - database
+
+    database:
+        build: 
+            context: ./database
+            args:
+                BASE_IMAGE: "${DATABASE_BASE_IMAGE}"
+        image: shinobi-database
+        restart: always
+        expose: 
+            - "3306"
+        environment:
+            MYSQL_USER: "${MYSQL_USER_NAME:-shinobi}"
+            MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
+            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+            MYSQL_DATABASE: "${MYSQL_DATABASE:-shinobi}"
+
