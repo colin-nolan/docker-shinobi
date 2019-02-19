@@ -10,7 +10,7 @@ port="$(jq -r '.db.port' /opt/shinobi/conf.json)"
 
 # XXX: Could use knex (library Shinobi uses) to do this
 >&2 echo "Waiting for database to be ready..."
-while ! mysqladmin ping --host="${host}" --port="${port}" --user=root; do
+while ! mysqladmin ping --host="${host}" --port="${port}" --user=root --silent; do
 	sleep 1
 done
 >&2 echo "Database is ready!"

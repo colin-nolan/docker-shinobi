@@ -18,3 +18,5 @@ RUN apt-get update \
 		ca-certificates \
 	&& rm -rf /var/lib/apt/lists/*
 
+ADD server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+
