@@ -21,6 +21,7 @@ RUN git clone --depth=1 --branch="${SHINOBI_REPOSITORY_BRANCH}" "${SHINOBI_REPOS
 	&& npm install ffbinaries
 
 ADD generate-config.py "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
+ADD generate-super-config.sh "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
 ADD docker-entrypoint.sh /
 
 CMD ["/docker-entrypoint.sh"]
