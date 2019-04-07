@@ -4,6 +4,8 @@ services:
     shinobi:
         build:
             context: ./shinobi
+            args:
+                BASE_IMAGE_WITH_FFMPEG: "${SHINOBI_BASE_IMAGE:-colinnolan/ffmpeg}"
         image: shinobi
         restart: always
         volumes:
@@ -11,8 +13,17 @@ services:
               source: "${SHINOBI_CONFIG_LOCATION:-./shinobi/config.default.json}"
               target: /mnt/host/conf.json
               read_only: true
-           # TODO: Take out "/opt/shinobi/videos"
-           # TODO: /etc/localtime:/etc/localtime:ro, /etc/timezone:/etc/timezone:ro
+            - type: bind
+              source: "${SHINOBI_VIDEO_LOCATION}"
+              target: /opt/shinobi/videos
+            - type: bind
+              source: /etc/localtime
+              target: /etc/localtime
+              read_only: true
+            - type: bind
+              source: /etc/timezone
+              target: /etc/timezone
+              read_only: true
         ports:
             - "${SHINOBI_HOST_PORT:-8080}:${SHINOBI_CONTAINER_PORT:-8080}"
         environment:
@@ -45,3 +56,4 @@ services:
             MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
             MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
             MYSQL_DATABASE: "${MYSQL_DATABASE:-ccio}"
+
