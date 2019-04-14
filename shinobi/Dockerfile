@@ -7,11 +7,12 @@ ENV DOCKER_SHINOBI_INSTALL_DIRECTORY=/opt/docker-shinobi
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
+		ca-certificates \
 		curl \
+		git \
 		jq \
 		mariadb-client \
-		git \
-		ca-certificates \
+		procps \
 	&& rm -rf /var/lib/apt/lists/*
 
 RUN curl -sL https://deb.nodesource.com/setup_11.x | bash - \
