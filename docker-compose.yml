@@ -6,6 +6,8 @@ services:
             context: ./shinobi
             args:
                 BASE_IMAGE_WITH_FFMPEG: "${SHINOBI_BASE_IMAGE:-colinnolan/ffmpeg}"
+                SHINOBI_REPOSITORY_URL: "${SHINOBI_REPOSITORY_URL:-https://gitlab.com/Shinobi-Systems/Shinobi.git}"
+                SHINOBI_REPOSITORY_BRANCH: "${SHINOBI_REPOSITORY_BRANCH:-master}"
         image: shinobi
         restart: always
         volumes:
