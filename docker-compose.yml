@@ -44,7 +44,7 @@ services:
         build: 
             context: ./database
             args:
-                BASE_IMAGE: "${DATABASE_BASE_IMAGE}"
+                BASE_IMAGE: "${DATABASE_BASE_IMAGE:-mariadb}"
         image: shinobi-database
         restart: always
         volumes:
