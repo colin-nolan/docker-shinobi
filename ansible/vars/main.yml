@@ -1,0 +1,3 @@
+---
+
+shinobi_role_database_image_build_directory: "{{ shinobi_role_source_directory }}/database"
