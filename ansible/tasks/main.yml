@@ -10,6 +10,15 @@
     - shinobi_super_user_email
     - shinobi_super_user_password
 
+- name: install Python Docker modules
+  become: yes
+  pip:
+    name:
+      - "{{ item }}"
+  loop:
+    - docker
+    - docker-compose
+
 - name: create directories
   become: yes
   file:
@@ -38,8 +47,9 @@
 #    build:
 #      path: "{{ shinobi_role_database_image_build_directory }}"
 #      pull: yes
-#
-#- fail:
+
+
+
 
 - name: setup containerised services
   become: yes

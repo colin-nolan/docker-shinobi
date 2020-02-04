@@ -1,0 +1,33 @@
+---
+
+- name: Converge
+  hosts: all
+
+  # TODO: Press out image and use that instead?
+  pre_tasks:
+    - name: install apt requirements
+      become: yes
+      apt:
+        name:
+          - ca-certificates
+          - wget
+          - python3-setuptools
+          - python3-pip
+        install_recommends: no
+
+    - name: install Docker CLI
+      unarchive:
+        src: https://download.docker.com/linux/static/stable/x86_64/docker-19.03.5.tgz
+        dest: /usr/local/bin
+        remote_src: yes
+
+  roles:
+    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+  vars:
+    ansible_python_interpreter: "/usr/bin/python3"
+    shinobi_database_root_password: password123
+    shinobi_database_user_name: user123
+    shinobi_database_user_password: password123
+    shinobi_super_user_email: admin@localhost
+    shinobi_super_user_password: password123
