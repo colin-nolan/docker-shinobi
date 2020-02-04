@@ -48,9 +48,6 @@
 #      path: "{{ shinobi_role_database_image_build_directory }}"
 #      pull: yes
 
-
-
-
 - name: setup containerised services
   become: yes
   docker_compose:
