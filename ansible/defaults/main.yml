@@ -7,7 +7,8 @@
 
 ---
 
-shinobi_docker_database_base_image: jsurf/rpi-mariadb:stretch
+#shinobi_docker_database_base_image: jsurf/rpi-mariadb:stretch
+shinobi_docker_database_base_image: mariadb
 shinobi_data_directory: /usr/lib/shinobi
 shinobi_video_directory: "{{ shinobi_data_directory }}/videos"
 
