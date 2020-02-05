@@ -1,0 +1,22 @@
+---
+
+name: GitHub Actions CI/CD
+on:
+  - push
+jobs:
+  docker-shinobi-ansible:
+    name: Ansible setup for Dockerised Shinbi setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Install test requirements
+        run: |
+          sudo pip3 install setuptools
+          sudo pip3 install -r ansible/molecule/default/requirements.txt
+
+      - name: Run Molecule tests
+        working-directory: ansible
+        run: |
+          python3 -m molecule test
