@@ -29,31 +29,21 @@
     - "{{ shinobi_data_directory }}"
     - "{{ shinobi_video_directory }}"
     - "{{ shinobi_role_source_directory }}"
-    - "{{ shinobi_role_database_image_build_directory }}"
+    - "{{ shinobi_image_build_directory }}"
 
-#- name: clone source of Shinobi base image
-#  become: yes
-#  git:
-#    dest: "{{ shinobi_role_database_image_build_directory }}"
-#    repo: "{{ shinobi_docker_shinobi_base_image_build_source.repository }}"
-#    version: "{{ shinobi_docker_shinobi_base_image_build_source.version | default('master') }}"
-#  when: shinobi_docker_shinobi_base_image_build_source is defined
-#
-#- name: build Shinobi base image
-#  become: yes
-#  docker_image:
-#    name: "{{ shinobi_docker_shinobi_base_image }}"
-#    source: build
-#    build:
-#      path: "{{ shinobi_role_database_image_build_directory }}"
-#      pull: yes
+- name: copy Shinobi Docker files
+  become: yes
+  copy:
+    src: files/docker-shinobi/
+    dest: "{{ shinobi_image_build_directory }}"
+    follow: yes
 
 - name: setup containerised services
   become: yes
   docker_compose:
     build: yes
     project_name: shinobi
-    project_src: TODO
+    project_src: "{{ shinobi_image_build_directory }}"
   environment:
     DATABASE_BASE_IMAGE: "{{ shinobi_docker_database_base_image }}"
     MYSQL_USER_NAME: "{{ shinobi_database_root_password }}"
@@ -64,6 +54,6 @@
     SHINOBI_SUPER_USER_PASSWORD: "{{ shinobi_super_user_password }}"
     SHINOBI_VIDEO_LOCATION: "{{ shinobi_video_directory }}"
     SHINOBI_BASE_IMAGE: "{{ shinobi_docker_shinobi_base_image }}"
-    SHINOBI_REPOSITORY_URL: "{{ shinobi_source.repository | default(omit) }}"
-    SHINOBI_REPOSITORY_BRANCH: "{{ shinobi_source.branch | default(omit) }}"
+    SHINOBI_REPOSITORY_URL: "{{ shinobi_source.repository | default(None) }}"
+    SHINOBI_REPOSITORY_BRANCH: "{{ shinobi_source.branch | default(None) }}"
     SHINOBI_HOST_PORT: "{{ shinobi_host_port }}"
