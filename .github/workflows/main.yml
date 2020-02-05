@@ -12,8 +12,11 @@ jobs:
         uses: actions/checkout@master
 
       - name: Install test requirements
-        run: pip install -r ansible/molecule/default/requirements.txt
+        run: |
+          sudo pip3 install setuptools
+          sudo pip3 install -r ansible/molecule/default/requirements.txt
 
       - name: Run Molecule tests
         working-directory: ansible
-        run: molecule test
+        run: |
+          python3 -m molecule test
