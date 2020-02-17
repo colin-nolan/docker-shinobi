@@ -1,19 +1,26 @@
 ---
+
 dependency:
   name: galaxy
+
 driver:
   name: docker
+
 lint:
   name: yamllint
+
 platforms:
-  - name: instance
-    image: colinnolan/ubuntu-with-docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+  - name: shinobi-ansible-test
+    image: colinnolan/molecule-docker-platforms:ubuntu-python3-dind
+    privileged: True
+
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  playbooks:
+    converge: playbook.yml
+
 verifier:
   name: testinfra
   lint:

@@ -27,9 +27,12 @@ RUN git clone --depth=1 --branch="${SHINOBI_REPOSITORY_BRANCH}" "${SHINOBI_REPOS
 	&& cd "${SHINOBI_INSTALL_DIRECTORY}" \
 	&& npm install
 
-ADD generate-config.py "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
-ADD generate-super-config.sh "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
-ADD docker-entrypoint.sh /docker-entrypoint.sh
+COPY generate-config.py "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
+COPY generate-super-config.sh "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh \
+    "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/generate-config.py" \
+    "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/generate-super-config.sh"
 
 CMD ["/docker-entrypoint.sh"]
  

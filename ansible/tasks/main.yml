@@ -30,6 +30,15 @@
     - "{{ shinobi_video_directory }}"
     - "{{ shinobi_role_source_directory }}"
     - "{{ shinobi_image_build_directory }}"
+    - "{{ shinobi_config_directory }}"
+
+# See file type information: https://docs.docker.com/compose/env-file/
+- name: create Docker compose configuration
+  become: yes
+  template:
+    src: compose.env.j2
+    dest: "{{ shinobi_docker_compose_config_location }}"
+    mode: 0600
 
 - name: copy Shinobi Docker files
   become: yes
@@ -38,22 +47,16 @@
     dest: "{{ shinobi_image_build_directory }}"
     follow: yes
 
+# https://docs.docker.com/compose/environment-variables/#the-env-file
+- name: symlink configuration into the same directory as docker-compose.yml
+  file:
+    src: "{{ shinobi_docker_compose_config_location }}"
+    dest: "{{ shinobi_image_build_directory }}/.env"
+    state: link
+
 - name: setup containerised services
   become: yes
   docker_compose:
     build: yes
     project_name: shinobi
     project_src: "{{ shinobi_image_build_directory }}"
-  environment:
-    DATABASE_BASE_IMAGE: "{{ shinobi_docker_database_base_image }}"
-    MYSQL_USER_NAME: "{{ shinobi_database_root_password }}"
-    MYSQL_USER_PASSWORD: "{{ shinobi_database_user_name }}"
-    MYSQL_ROOT_PASSWORD: "{{ shinobi_database_user_password }}"
-    SHINOBI_DATA_LOCATION: "{{ shinobi_data_directory }}"
-    SHINOBI_SUPER_USER_EMAIL: "{{ shinobi_super_user_email }}"
-    SHINOBI_SUPER_USER_PASSWORD: "{{ shinobi_super_user_password }}"
-    SHINOBI_VIDEO_LOCATION: "{{ shinobi_video_directory }}"
-    SHINOBI_BASE_IMAGE: "{{ shinobi_docker_shinobi_base_image }}"
-    SHINOBI_REPOSITORY_URL: "{{ shinobi_source.repository | default(None) }}"
-    SHINOBI_REPOSITORY_BRANCH: "{{ shinobi_source.branch | default(None) }}"
-    SHINOBI_HOST_PORT: "{{ shinobi_host_port }}"

@@ -25,4 +25,5 @@ shinobi_source:
 
 shinobi_host_port: 8080
 
-shinobi_role_source_directory: /usr/local/shinobi
+shinobi_role_source_directory: /usr/local/src/shinobi
+shinobi_config_directory: /etc/shinobi
