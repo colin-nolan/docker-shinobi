@@ -4,6 +4,7 @@
 #   - shinobi_database_user_password
 #   - shinobi_super_user_email
 #   - shinobi_super_user_password
+#   - shinobi_super_user_token
 
 ---
 
