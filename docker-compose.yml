@@ -1,61 +1,62 @@
+---
+
 version: "3.2"
 
 services:
-    shinobi:
-        build:
-            context: ./shinobi
-            args:
-                BASE_IMAGE_WITH_FFMPEG: "${SHINOBI_BASE_IMAGE:-colinnolan/ffmpeg}"
-                SHINOBI_REPOSITORY_URL: "${SHINOBI_REPOSITORY_URL:-https://gitlab.com/Shinobi-Systems/Shinobi.git}"
-                SHINOBI_REPOSITORY_BRANCH: "${SHINOBI_REPOSITORY_BRANCH:-master}"
-        image: shinobi
-        restart: always
-        volumes:
-            - type: bind
-              source: "${SHINOBI_CONFIG_LOCATION:-./shinobi/config.default.json}"
-              target: /mnt/host/conf.json
-              read_only: true
-            - type: bind
-              source: "${SHINOBI_VIDEO_LOCATION}"
-              target: /opt/shinobi/videos
-            - type: bind
-              source: /etc/localtime
-              target: /etc/localtime
-              read_only: true
-            - type: bind
-              source: /etc/timezone
-              target: /etc/timezone
-              read_only: true
-        ports:
-            - "${SHINOBI_HOST_PORT:-8080}:${SHINOBI_CONTAINER_PORT:-8080}"
-        environment:
-            MYSQL_HOST: database
-            MYSQL_PORT: "3306"
-            MYSQL_USER: "${MYSQL_USER_NAME:-shinobi}"
-            MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
-            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-            MYSQL_DATABASE: "${MYSQL_DATABASE:-ccio}"
-            SHINOBI_SUPER_USER_EMAIL: "${SHINOBI_SUPER_USER_EMAIL}"
-            SHINOBI_SUPER_USER_PASSWORD: "${SHINOBI_SUPER_USER_PASSWORD}"
-        depends_on:
-            - database
+  shinobi:
+    build:
+      context: ./shinobi
+      args:
+        BASE_IMAGE_WITH_FFMPEG: "${SHINOBI_BASE_IMAGE:-colinnolan/ffmpeg}"
+        SHINOBI_REPOSITORY_URL: "${SHINOBI_REPOSITORY_URL:-https://gitlab.com/Shinobi-Systems/Shinobi.git}"
+        SHINOBI_REPOSITORY_BRANCH: "${SHINOBI_REPOSITORY_BRANCH:-master}"
+    image: shinobi
+    restart: always
+    volumes:
+      - type: bind
+        source: "${SHINOBI_CONFIG_LOCATION:-./shinobi/config.default.json}"
+        target: /mnt/host/conf.json
+        read_only: true
+      - type: bind
+        source: "${SHINOBI_VIDEO_LOCATION}"
+        target: /opt/shinobi/videos
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone
+        read_only: true
+    ports:
+      - "${SHINOBI_HOST_PORT:-8080}:${SHINOBI_CONTAINER_PORT:-8080}"
+    environment:
+      MYSQL_HOST: database
+      MYSQL_PORT: "3306"
+      MYSQL_USER: "${MYSQL_USER_NAME:-shinobi}"
+      MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-ccio}"
+      SHINOBI_SUPER_USER_EMAIL: "${SHINOBI_SUPER_USER_EMAIL}"
+      SHINOBI_SUPER_USER_PASSWORD: "${SHINOBI_SUPER_USER_PASSWORD}"
+    depends_on:
+      - database
 
-    database:
-        build: 
-            context: ./database
-            args:
-                BASE_IMAGE: "${DATABASE_BASE_IMAGE:-mariadb}"
-        image: shinobi-database
-        restart: always
-        volumes:
-            - type: bind
-              source: "${SHINOBI_DATA_LOCATION}"
-              target: /var/lib/mysql
-        expose: 
-            - "3306"
-        environment:
-            MYSQL_USER: "${MYSQL_USER_NAME:-shinobi}"
-            MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
-            MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-            MYSQL_DATABASE: "${MYSQL_DATABASE:-ccio}"
-
+  database:
+    build:
+      context: ./database
+      args:
+        BASE_IMAGE: "${DATABASE_BASE_IMAGE:-mariadb}"
+    image: shinobi-database
+    restart: always
+    volumes:
+      - type: bind
+        source: "${SHINOBI_DATA_LOCATION}"
+        target: /var/lib/mysql
+    expose:
+      - "3306"
+    environment:
+      MYSQL_USER: "${MYSQL_USER_NAME:-shinobi}"
+      MYSQL_PASSWORD: "${MYSQL_USER_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-ccio}"

@@ -1,0 +1,62 @@
+---
+
+- name: validate mandatory variables
+  assert:
+    that: item | mandatory
+  loop:
+    - shinobi_database_root_password
+    - shinobi_database_user_name
+    - shinobi_database_user_password
+    - shinobi_super_user_email
+    - shinobi_super_user_password
+
+- name: install Python Docker modules
+  become: yes
+  pip:
+    name:
+      - "{{ item }}"
+  loop:
+    - docker
+    - docker-compose
+
+- name: create directories
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0770
+  loop:
+    - "{{ shinobi_data_directory }}"
+    - "{{ shinobi_video_directory }}"
+    - "{{ shinobi_role_source_directory }}"
+    - "{{ shinobi_image_build_directory }}"
+    - "{{ shinobi_config_directory }}"
+
+# See file type information: https://docs.docker.com/compose/env-file/
+- name: create Docker compose configuration
+  become: yes
+  template:
+    src: compose.env.j2
+    dest: "{{ shinobi_docker_compose_config_location }}"
+    mode: 0600
+
+- name: copy Shinobi Docker files
+  become: yes
+  copy:
+    src: files/docker-shinobi/
+    dest: "{{ shinobi_image_build_directory }}"
+    follow: yes
+
+# https://docs.docker.com/compose/environment-variables/#the-env-file
+- name: symlink configuration into the same directory as docker-compose.yml
+  file:
+    src: "{{ shinobi_docker_compose_config_location }}"
+    dest: "{{ shinobi_image_build_directory }}/.env"
+    state: link
+
+- name: setup containerised services
+  become: yes
+  docker_compose:
+    build: yes
+    project_name: shinobi
+    project_src: "{{ shinobi_image_build_directory }}"

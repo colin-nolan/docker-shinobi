@@ -14,8 +14,8 @@ RUN apt-get update \
 	&& mv "${tempDirectory}/sql/framework.sql" /docker-entrypoint-initdb.d \
 	&& rm -r "${tempDirectory}" \
 	&& apt-get purge -y \
-		git \
 		ca-certificates \
+		git \
 	&& rm -rf /var/lib/apt/lists/*
 
 ADD server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
