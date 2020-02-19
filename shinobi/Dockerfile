@@ -30,9 +30,12 @@ RUN git clone --depth=1 --branch="${SHINOBI_REPOSITORY_BRANCH}" "${SHINOBI_REPOS
 COPY generate-config.py "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
 COPY generate-super-config.sh "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh \
+RUN chmod +x \
+    /docker-entrypoint.sh \
     "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/generate-config.py" \
     "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/generate-super-config.sh"
 
 CMD ["/docker-entrypoint.sh"]
  
+HEALTHCHECK --interval=10m --start-period=30s \
+     CMD curl -f http://localhost:8080 || exit 1
