@@ -22,7 +22,4 @@
     shinobi_super_user_email: admin@localhost
     shinobi_super_user_password: password123
     shinobi_super_user_token: token123
-
-
-#  You need to specify one of MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD and MYSQL_RANDOM_ROOT_PASSWORD
-#error: database is uninitialized and password option is not specified
+    shinobi_user_email: user@localhost

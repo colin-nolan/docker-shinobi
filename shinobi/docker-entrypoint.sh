@@ -18,4 +18,3 @@ done
  
 cd "${SHINOBI_INSTALL_DIRECTORY}"
 node camera.js
-
