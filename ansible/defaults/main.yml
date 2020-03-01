@@ -8,16 +8,11 @@
 
 ---
 
-#shinobi_docker_database_base_image: jsurf/rpi-mariadb:stretch
-shinobi_docker_database_base_image: mariadb
+shinobi_docker_database_base_image: "{{ 'jsurf/rpi-mariadb:stretch' if ansible_architecture.startswith('armv') else 'mariadb' }}"
 shinobi_data_directory: /usr/lib/shinobi
 shinobi_video_directory: "{{ shinobi_data_directory }}/videos"
 
-# TODO: going to have to pull and build the base image?
-shinobi_docker_shinobi_base_image_build_source:
-  repository: https://github.com/colin-nolan/docker-ffmpeg.git
-  version: a72db01754ab409acea50a5e53ee3762f199ce52
-#shinobi_docker_shinobi_base_image: colinnolan/ffmpeg-rpi:latest
+# TODO: warning about using unoptimised build
 shinobi_docker_shinobi_base_image: colinnolan/ffmpeg:latest
 
 shinobi_source:

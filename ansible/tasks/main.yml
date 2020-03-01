@@ -11,7 +11,16 @@
     - shinobi_super_user_password
     - shinobi_super_user_token
 
-- name: install Python Docker modules
+- name: install apt prerequisites
+  package:
+    name:
+      - build-essential
+      - libffi-dev
+      - libssl-dev
+      - python3-dev
+  when: ansible_architecture.startswith("armv")
+
+- name: install Python prerequisites
   become: yes
   pip:
     name:
@@ -61,3 +70,8 @@
     build: yes
     project_name: shinobi
     project_src: "{{ shinobi_image_build_directory }}"
+
+- name: wait for Shinobi to start
+  wait_for:
+    host: 0.0.0.0
+    port: "{{ shinobi_host_port }}"
