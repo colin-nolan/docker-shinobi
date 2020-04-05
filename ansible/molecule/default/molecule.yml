@@ -15,6 +15,11 @@ platforms:
     privileged: True
     # TODO: remove this when push arm image to Dockerhub
     pull: False
+    # TODO: remove
+    exposed_ports:
+      - 8080/tcp
+    published_ports:
+      - 0.0.0.0:8080:8080/tcp
 
 provisioner:
   name: ansible
@@ -22,8 +27,13 @@ provisioner:
     name: ansible-lint
   playbooks:
     converge: playbook.yml
+  config_options:
+    defaults:
+      interpreter_python: auto
 
 verifier:
   name: testinfra
   lint:
     name: flake8
+  env:
+    TESTVARS_EXTRA_VARS: testvars.yml

@@ -1,11 +1,9 @@
-import os
 import json
 
-import testinfra.utils.ansible_runner
+import testaid
 
-testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    os.environ["MOLECULE_INVENTORY_FILE"]
-).get_hosts("all")
+testinfra_hosts = testaid.hosts()
+
 
 
 def test_containers_running(host):
@@ -13,22 +11,24 @@ def test_containers_running(host):
     assert len(containers) == 2
 
 
-def test_shinobi_ui_available(host):
+def test_shinobi_ui_available(host, testvars):
     shinobi = host.addr("0.0.0.0")
-    assert shinobi.port(8080).is_reachable
+    assert shinobi.port(testvars["shinobi_host_port"]).is_reachable
 
 
-def test_shinobi_super_user(host):
+def test_shinobi_super_user(host, testvars):
     input_data = {
-        "mail": "admin@localhost",
-        "pass": "password123",
+        "mail": testvars["shinobi_super_user_email"],
+        "pass": testvars["shinobi_super_user_password"],
         "function": "dash",
         "machineID": "fMUVxYdG1X3hWb7GNkTd"
     }
     output = host.run(
         f"curl -s -H 'Content-Type: application/json' -d '{json.dumps(input_data)}' "
-        f"http://localhost:8080/super/token123/accounts/list")
+        f"http://localhost:{testvars['shinobi_host_port']}/super/{testvars['shinobi_super_user_token']}/accounts/list")
     assert output.exit_status == 0
 
     parsed_stdout = json.loads(output.stdout)
     assert parsed_stdout["ok"]
+
+    # TODO: check that the query has ACTUALLY worked

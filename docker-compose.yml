@@ -21,11 +21,11 @@ services:
         source: "${SHINOBI_VIDEO_LOCATION}"
         target: /opt/shinobi/videos
       - type: bind
-        source: /etc/localtime
+        source: "${SHINOBI_LOCALTIME:-/etc/localtime}"
         target: /etc/localtime
         read_only: true
       - type: bind
-        source: /etc/timezone
+        source: "${SHINOBI_TIMEZONE:-/etc/timezone}"
         target: /etc/timezone
         read_only: true
     ports:

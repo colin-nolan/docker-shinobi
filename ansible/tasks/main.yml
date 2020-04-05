@@ -14,6 +14,11 @@
 - name: install apt prerequisites
   package:
     name:
+      - tzdata
+
+- name: install RPi apt prerequisites
+  package:
+    name:
       - build-essential
       - libffi-dev
       - libssl-dev
@@ -75,3 +80,24 @@
   wait_for:
     host: 0.0.0.0
     port: "{{ shinobi_host_port }}"
+
+# TODO: set users
+#- name: set Shinobi user
+#  shinobi_user:
+#    email: colin@localhost
+#    password: colin123
+#    state: present
+#    host: 0.0.0.0
+#    port: "{{ shinobi_host_port }}"
+#    token: "{{ shinobi_super_user_token }}"
+##  no_log: true
+#
+#- name: set Shinobi user again
+#  shinobi_user:
+#    email: colin@localhost
+#    password: colin1234
+#    state: present
+#    host: 0.0.0.0
+#    port: "{{ shinobi_host_port }}"
+#    token: "{{ shinobi_super_user_token }}"
+##  no_log: true

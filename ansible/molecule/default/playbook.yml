@@ -2,24 +2,7 @@
 
 - name: Converge
   hosts: all
-
-  pre_tasks:
-    # TODO: Bake in image?
-    - name: install apt requirements
-      become: yes
-      apt:
-        name:
-          - tzdata
-        install_recommends: no
-
   roles:
     - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
-  vars:
-    ansible_python_interpreter: "/usr/bin/python3"
-    shinobi_database_root_password: password123
-    shinobi_database_user_name: user123
-    shinobi_database_user_password: password123
-    shinobi_super_user_email: admin@localhost
-    shinobi_super_user_password: password123
-    shinobi_super_user_token: token123
-    shinobi_user_email: user@localhost
+  vars_files:
+    - testvars.yml

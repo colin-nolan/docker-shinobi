@@ -1,0 +1,10 @@
+---
+
+shinobi_database_root_password: password123
+shinobi_database_user_name: user123
+shinobi_database_user_password: password123
+shinobi_super_user_email: admin@localhost
+shinobi_super_user_password: password123
+shinobi_super_user_token: token123
+shinobi_user_email: user@localhost
+shinobi_host_port: 8080
