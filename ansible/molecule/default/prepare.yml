@@ -1,0 +1,9 @@
+---
+
+- hosts: all
+  tasks:
+    - name: install test dependencies
+      pip:
+        name:
+          - testaid
+          - shinobi-client

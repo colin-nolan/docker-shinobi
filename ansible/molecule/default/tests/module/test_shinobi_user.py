@@ -1,34 +1,17 @@
-from types import MappingProxyType
-from typing import Dict, Optional, Tuple
-from uuid import uuid4
+from typing import Dict, Optional, Callable
 
 import pytest
 import testaid
+from shinobi_client import ShinobiClient
 from testinfra.host import Host
 
-DEFAULT_RUN_CONFIGURATION = dict(check=False)
+from .._common import run_ansible, create_example_email_and_password
 
 testinfra_hosts = testaid.hosts()
 
 
-def run_ansible(host: Host, playbook: str, parameter_values: Dict, run_configuration: Dict = MappingProxyType({})) \
-        -> Dict:
-    """
-    TODO
-    :param host:
-    :param playbook:
-    :param parameter_values:
-    :param run_configuration:
-    :return:
-    """
-    run_configuration = dict(**DEFAULT_RUN_CONFIGURATION, **run_configuration)
-    return host.ansible(
-        playbook, " ".join(f"{key}={value}" for key, value in parameter_values.items()), **run_configuration)
-
-
 def _run_ansible_shinobi_user_task(host: Host, testvars: Dict, *, email: Optional[str] = None,
-                                   password: Optional[str] = None, state: Optional[str] = None) \
-        -> Dict:
+                                   password: Optional[str] = None, state: Optional[str] = None) -> Dict:
     """
     TODO
     :param host:
@@ -56,54 +39,75 @@ def _run_ansible_shinobi_user_task(host: Host, testvars: Dict, *, email: Optiona
     return output
 
 
-def _create_example_email_and_password() -> Tuple[str, str]:
+@pytest.fixture
+def does_user_exist(shinobi_client) -> Callable[[str], bool]:
     """
     TODO
+    :param shinobi_client:
     :return:
     """
-    random_string = str(uuid4())
-    return f"{random_string}@example.com", random_string
+    def wrapped(email: str):
+        # return _does_user_exist(shinobi_client, email)
+        return shinobi_client.user.get(email) is not None
 
-
-def _does_user_exist(host: Host, testvars: Dict, email: str) -> bool:
-    """
-    TODO
-    :param email:
-    :param host:
-    :param testvars:
-    :return:
-    """
-    result = _run_ansible_shinobi_user_task(host, testvars, email=email)
-    assert not result["changed"]
-    return result["user"] is not None
+    return wrapped
 
 
 @pytest.fixture
-def exiting_user(host: Host, testvars: Dict):
-    email, password = _create_example_email_and_password()
+def shinobi_client(testvars: Dict):
+    """
+    TODO
+    :param testvars:
+    :return:
+    """
+    # TODO: common host string
+    return ShinobiClient("0.0.0.0", testvars["shinobi_host_port"], testvars["shinobi_super_user_token"])
+
+
+@pytest.fixture
+def exiting_user(host: Host, testvars: Dict, shinobi_client):
+    """
+    TODO
+    :param host:
+    :param testvars:
+    :param shinobi_client:
+    :return:
+    """
+    email, password = create_example_email_and_password()
+    return shinobi_client.user.create(email=email, password=password)
+
+
+def test_create_user(host: Host, testvars: Dict, does_user_exist: Callable[[str], bool]):
+    email, password = create_example_email_and_password()
     result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
     assert result["changed"]
-    assert _does_user_exist(host, testvars, email)
-    return result["user"]
+    assert does_user_exist(email)
 
-
-def test_create_user(host: Host, testvars: Dict):
-    email, password = _create_example_email_and_password()
-    result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
-    assert result["changed"]
-    assert _does_user_exist(host, testvars, email)
-
+    # Testing idempotence
     result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
     assert not result["changed"]
-    assert _does_user_exist(host, testvars, email)
+    assert does_user_exist(email)
 
 
-def test_list_users(host: Host, testvars: Dict):
+def test_list_non_existent_user(host: Host, testvars: Dict):
+    email, password = create_example_email_and_password()
+    result = _run_ansible_shinobi_user_task(host, testvars, email=email)
+    assert not result["changed"]
+    assert result["user"] is None
+
+
+def test_list_user(host: Host, testvars: Dict, exiting_user: Dict):
+    email = exiting_user["email"]
+    result = _run_ansible_shinobi_user_task(host, testvars, email=email)
+    assert not result["changed"]
+    assert result["user"]["mail"] == email
+
+
+def test_list_users(host: Host, testvars: Dict, shinobi_client: ShinobiClient):
     emails = []
     for i in range(3):
-        email, password = _create_example_email_and_password()
-        result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
-        assert result["changed"]
+        email, password = create_example_email_and_password()
+        shinobi_client.user.create(email=email, password=password)
         emails.append(email)
 
     result = _run_ansible_shinobi_user_task(host, testvars)
@@ -112,39 +116,39 @@ def test_list_users(host: Host, testvars: Dict):
     assert len(retrieved_users) == len(emails)
 
 
-def test_list_non_existent_user(host: Host, testvars: Dict):
-    email, password = _create_example_email_and_password()
-    result = _run_ansible_shinobi_user_task(host, testvars, email=email)
+def test_delete_non_existent_user(host: Host, testvars: Dict):
+    email, _ = create_example_email_and_password()
+    result = _run_ansible_shinobi_user_task(host, testvars, email=email, state="absent")
     assert not result["changed"]
-    assert result["user"] is None
-#
-#
-# def test_list_existing_user(host: Host, testvars: Dict):
-#     email, password = _create_example_email_and_password()
-#     result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
-#     assert result["changed"]
-#
-#     result = _run_ansible_shinobi_user_task(host, testvars, email=email)
-#     assert not result["changed"]
-#     assert result["user"]["mail"] == email
-#
-#
-# def test_delete_non_existent_user(host: Host, testvars: Dict):
-#     email, _ = _create_example_email_and_password()
-#     result = _run_ansible_shinobi_user_task(host, testvars, email=email, state="absent")
-#     assert not result["changed"]
-#
-#
-# def test_delete_existing_user(host: Host, testvars: Dict, exiting_user: Dict):
-#     email = exiting_user["mail"]
-#     result = _run_ansible_shinobi_user_task(host, testvars, email=email, state="absent")
-#     assert result["changed"]
-#     assert not _does_user_exist(host, testvars, email)
-#
-#
-# # TODO: test modify user
-# # def modify_user(host: Host, testvars: Dict):
-# #     email, password = _create_example_email_and_password()
-# #     _run_ansible_shinobi_user(host, testvars, email=email, password=password, state="present")
-# #     assert _does_user_exist(host, testvars, email)
-#
+
+
+def test_delete_user(host: Host, testvars: Dict, exiting_user: Dict, does_user_exist: Callable[[str], bool]):
+    email = exiting_user["mail"]
+    result = _run_ansible_shinobi_user_task(host, testvars, email=email, state="absent")
+    assert result["changed"]
+    assert not does_user_exist(email)
+
+
+def test_modify_non_existent_user(host: Host, testvars: Dict, does_user_exist: Callable[[str], bool]):
+    email, password = create_example_email_and_password()
+    result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
+    assert result["changed"]
+    assert does_user_exist(email)
+
+
+def test_modify_user_with_same_values(
+        host: Host, testvars: Dict, exiting_user: Dict, does_user_exist: Callable[[str], bool]):
+    email = exiting_user["email"]
+    password = exiting_user["password"]
+    result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
+    assert not result["changed"]
+    assert does_user_exist(email)
+
+
+def test_modify_user_with_different_email(
+        host: Host, testvars: Dict, exiting_user: Dict, does_user_exist: Callable[[str], bool]):
+    email = exiting_user["email"]
+    password = "new_password"
+    result = _run_ansible_shinobi_user_task(host, testvars, email=email, password=password, state="present")
+    assert result["changed"]
+    assert does_user_exist(email)
