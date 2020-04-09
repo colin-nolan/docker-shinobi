@@ -1,0 +1,14 @@
+---
+
+language: python
+python:
+  - 3.8
+
+services:
+  - docker
+
+before_install:
+  - pip install -r ansible/molecule/default/requirements.txt
+
+script:
+  - cd ansible && molecule test
