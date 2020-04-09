@@ -6,8 +6,9 @@ dependency:
 driver:
   name: docker
 
-lint:
-  name: yamllint
+lint: |
+  set -e
+  yamllint .
 
 platforms:
   - name: shinobi-ansible-test
@@ -23,17 +24,19 @@ platforms:
 
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
+  lint: |
+    set -e
+    ansible-lint
   playbooks:
-    converge: playbook.yml
+    converge: converge.yml
   config_options:
     defaults:
       interpreter_python: auto
 
 verifier:
   name: testinfra
-  lint:
-    name: flake8
+  lint: |
+    set -e
+    flake8
   env:
     TESTVARS_EXTRA_VARS: testvars.yml

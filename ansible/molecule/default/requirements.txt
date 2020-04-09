@@ -1,3 +1,8 @@
 molecule[docker]
+yamllint
+ansible-lint
+flake8
+
+testinfra
 testaid
 shinobi-client
