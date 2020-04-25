@@ -1,4 +1,3 @@
-import json
 from typing import Dict, Callable
 
 import pytest
@@ -7,7 +6,7 @@ from shinobi_client import ShinobiClient, ShinobiMonitorOrm
 from testinfra.host import Host
 
 from .resources.metadata import get_monitor_configuration
-from .._common import run_ansible, create_parameter_arguments, generate_random_string
+from .._common import run_ansible, create_parameter_arguments, generate_random_string, create_example_email_and_password
 
 testinfra_hosts = takeltest.hosts()
 
@@ -38,16 +37,16 @@ def test_create_monitor(shinobi_monitor_ansible_task_runner, existing_user, shin
 
     result = shinobi_monitor_ansible_task_runner(**parameter_arguments)
     assert result["changed"]
-    assert "id" in result
+    assert "details" in result["monitor"]
 
     shinobi_monitor_orm = shinobi_client.monitor(email, password)
-    monitor = shinobi_monitor_orm.get(result["id"])
+    monitor = shinobi_monitor_orm.get(monitor_id)
     assert monitor is not None
     assert ShinobiMonitorOrm.is_configuration_equivalent(configuration, monitor)
 
     # Testing idempotence
     result = shinobi_monitor_ansible_task_runner(**parameter_arguments)
-    monitor = shinobi_monitor_orm.get(result["id"])
+    monitor = shinobi_monitor_orm.get(monitor_id)
     assert monitor is not None
     assert ShinobiMonitorOrm.is_configuration_equivalent(configuration, monitor)
 

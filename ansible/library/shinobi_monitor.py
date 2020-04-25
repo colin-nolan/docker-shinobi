@@ -93,9 +93,9 @@ def run_module():
             module.fail_json(msg=f"\"{CONFIGURATION_PARAMETER}\" must not be supplied if {STATE_PARAMETER} is not set")
 
         if monitor_id is not None:
-            info = dict(user=shinobi_monitor_orm.get(monitor_id))
+            info = dict(monitor=shinobi_monitor_orm.get(monitor_id))
         else:
-            info = dict(users=shinobi_monitor_orm.get_all())
+            info = dict(monitors=shinobi_monitor_orm.get_all())
     else:
         if configuration is None:
             module.fail_json(msg=f"\"{CONFIGURATION_PARAMETER}\" must be supplied to setup a monitor")
@@ -117,11 +117,11 @@ def modify_monitor(shinobi_monitor_orm: ShinobiMonitorOrm, state: str, monitor_i
             return deleted, None
         else:
             modified = shinobi_monitor_orm.modify(monitor_id, configuration)
-            return modified, configuration
+            return modified, dict(monitor=configuration)
     else:
         if state == PRESENT_STATE:
             monitor = shinobi_monitor_orm.create(monitor_id, configuration)
-            return True, monitor
+            return True, dict(monitor=monitor)
         else:
             return False, None
 

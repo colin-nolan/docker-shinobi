@@ -76,10 +76,10 @@ def modify_user(email: str, state: str, shinobi_client: ShinobiClient, *, passwo
         else:
             try:
                 shinobi_client.api_key.get(email, password)
-                return False, user
+                return False, dict(user=user)
             except ShinobiWrongPasswordError:
                 shinobi_client.user.modify(email=email, password=password)
-                return True, user
+                return True, dict(user=user)
     else:
         if state == PRESENT_STATE:
             user = shinobi_client.user.create(email, password)

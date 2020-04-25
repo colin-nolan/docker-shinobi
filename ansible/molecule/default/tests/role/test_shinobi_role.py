@@ -1,6 +1,5 @@
 from typing import Dict
 
-# import testaid
 from shinobi_client import ShinobiClient
 from testinfra.host import Host
 
