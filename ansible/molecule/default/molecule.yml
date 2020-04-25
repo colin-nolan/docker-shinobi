@@ -29,6 +29,7 @@ provisioner:
     ansible-lint
   playbooks:
     converge: converge.yml
+  # TODO: what about `ansible.cfg`?
   config_options:
     defaults:
       interpreter_python: auto
@@ -40,3 +41,6 @@ verifier:
     flake8
   env:
     TESTVARS_EXTRA_VARS: testvars.yml
+  # TODO
+#  options:
+#    p: cacheprovider

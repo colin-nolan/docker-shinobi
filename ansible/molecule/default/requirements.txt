@@ -2,7 +2,9 @@ molecule[docker]
 yamllint
 ansible-lint
 flake8
+pytest
 
 testinfra
-testaid
+takeltest==0.2.0
+# testaid
 shinobi-client
