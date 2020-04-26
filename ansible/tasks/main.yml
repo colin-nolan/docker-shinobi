@@ -89,7 +89,7 @@
   until: result.status == 200
   retries: 120
   delay: 1
-  changed: false
+  changed_when: false
 
 - name: set Shinobi users
   shinobi_user:
