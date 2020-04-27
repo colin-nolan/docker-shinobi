@@ -81,7 +81,7 @@
     host: "{{ shinobi_host_address }}"
     port: "{{ shinobi_host_port }}"
 
-- name: wait for Shinobi to correct service HTTP requests
+- name: wait for Shinobi to correctly service HTTP requests
   uri:
     url: "http://{{ shinobi_host_address }}:{{ shinobi_host_port }}"
     status_code: 200

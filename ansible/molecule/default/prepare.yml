@@ -5,5 +5,5 @@
     - name: install test dependencies
       pip:
         name:
-          - testaid
-          - shinobi-client
+          - takeltest
+          - shinobi-client>=3

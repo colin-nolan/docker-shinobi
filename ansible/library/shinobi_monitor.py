@@ -45,7 +45,9 @@ STATE_PARAMETER = "state"
 EMAIL_PARAMETER = "email"
 PASSWORD_PARAMETER = "password"
 MONITOR_ID_PARAMETER = "id"
+MONITOR_ID_PARAMETER_ALIASES = ["monitor_id"]
 CONFIGURATION_PARAMETER = "configuration"
+USER_PARAMETER = "user"
 
 PRESENT_STATE = "present"
 ABSENT_STATE = "absent"
@@ -57,12 +59,27 @@ def run_module():
             HOST_PARAMETER: dict(type="str", required=True),
             PORT_PARAMETER: dict(type="int", required=True),
             STATE_PARAMETER: dict(type="str", default=None),
-            EMAIL_PARAMETER: dict(type="str", required=True),
-            PASSWORD_PARAMETER: dict(type="str", required=True, no_log=True),
-            MONITOR_ID_PARAMETER: dict(type="str"),
+            EMAIL_PARAMETER: dict(type="str"),
+            PASSWORD_PARAMETER: dict(type="str", no_log=True),
+            USER_PARAMETER: dict(type="dict", no_log=True),
+            MONITOR_ID_PARAMETER: dict(type="str", aliases=MONITOR_ID_PARAMETER_ALIASES),
             CONFIGURATION_PARAMETER: dict(type="dict")
         }
     )
+    user = module.params[USER_PARAMETER]
+    if user:
+        if (module.params[EMAIL_PARAMETER] or module.params[PASSWORD_PARAMETER]):
+            module.fail_json(
+                msg=f"Either {USER_PARAMETER} or {EMAIL_PARAMETER}/{PASSWORD_PARAMETER} must be given, not both")
+
+        if not user[EMAIL_PARAMETER]:
+             module.fail_json(msg=f"{EMAIL_PARAMETER} field missing from {USER_PARAMETER} argument")
+        if not user[PASSWORD_PARAMETER]:
+             module.fail_json(msg=f"{PASSWORD_PARAMETER} field missing from {USER_PARAMETER} argument")
+
+        module.params[EMAIL_PARAMETER] = user[EMAIL_PARAMETER]
+        module.params[PASSWORD_PARAMETER] = user[PASSWORD_PARAMETER]
+
     host = module.params[HOST_PARAMETER]
     port = module.params[PORT_PARAMETER]
     state = module.params[STATE_PARAMETER]
@@ -77,8 +94,6 @@ def run_module():
         module.fail_json(msg="The email of the user to set the monitor for must be given")
     if password is None:
         module.fail_json(msg="The password of the user to set the monitor for must be given")
-    if monitor_id is None:
-        module.fail_json(msg="The ID of the monitor to be set must be given")
 
     try:
         shinobi_monitor_orm = ShinobiClient(host, port).monitor(email, password)
@@ -97,7 +112,9 @@ def run_module():
         else:
             info = dict(monitors=shinobi_monitor_orm.get_all())
     else:
-        if configuration is None:
+        if monitor_id is None:
+            module.fail_json(msg=f"The ID of the monitor to be set must be given as {MONITOR_ID_PARAMETER}")
+        if configuration is None and state != ABSENT_STATE:
             module.fail_json(msg=f"\"{CONFIGURATION_PARAMETER}\" must be supplied to setup a monitor")
         changed, info = modify_monitor(shinobi_monitor_orm, state, monitor_id, configuration)
 
@@ -107,7 +124,8 @@ def run_module():
         module.exit_json(changed=changed, **info)
 
 
-def modify_monitor(shinobi_monitor_orm: ShinobiMonitorOrm, state: str, monitor_id: str, configuration: Dict = None) \
+# Note: don't use `ShinobiMonitorOrm` as it the library may not have loaded, which is handled in the `run_module` method
+def modify_monitor(shinobi_monitor_orm: "ShinobiMonitorOrm", state: str, monitor_id: str, configuration: Dict = None) \
         -> Tuple[bool, Optional[Dict]]:
     monitor = shinobi_monitor_orm.get(monitor_id)
 

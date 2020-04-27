@@ -66,6 +66,7 @@ def run_module():
         module.exit_json(changed=changed, **info)
 
 
+# Note: don't use `ShinobiClient` as it the library may not have loaded, which is handled in the `run_module` method
 def modify_user(email: str, state: str, shinobi_client: ShinobiClient, *, password: str) -> Tuple[bool, Optional[Dict]]:
     user = shinobi_client.user.get(email)
 

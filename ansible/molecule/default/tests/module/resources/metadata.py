@@ -10,7 +10,7 @@ EXAMPLE_MONITOR_LOCATIONS = {
 }
 
 
-def get_monitor_configuration(example_monitor_id: int = 1) -> Dict:
+def generate_monitor_configuration(example_monitor_id: int = 1) -> Dict:
     """
     TODO
     :param example_monitor_id:

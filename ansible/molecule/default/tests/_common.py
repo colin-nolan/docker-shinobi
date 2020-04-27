@@ -1,7 +1,7 @@
-import json
 import random
 import string
 from copy import copy
+from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Dict, Tuple
 
@@ -10,6 +10,12 @@ from testinfra.host import Host
 
 DEFAULT_RUN_CONFIGURATION = dict(check=False)
 SHINOBI_HOST = "0.0.0.0"
+
+
+class AnsibleRunError(RuntimeError):
+    """
+    TODO
+    """
 
 
 def run_ansible(host: Host, playbook: str, parameter_values: Dict, run_configuration: Dict = MappingProxyType({})) \
@@ -40,7 +46,12 @@ def run_ansible(host: Host, playbook: str, parameter_values: Dict, run_configura
     # For some reason module args are passed though as a string. JSON dump did not work
     parameter_arguments = " ".join(f"{key}={value}" for key, value in parameter_values.items())
 
-    return host.ansible(playbook, parameter_arguments, **run_configuration, extra_vars=extra_vars)
+    result = host.ansible(playbook, parameter_arguments, **run_configuration, extra_vars=extra_vars)
+    # `host.ansible` doesn't offer a good way of distinguishing success and failure. Assuming that `msg` in the output
+    # (required by Ansible's `fail_json`) can be used to detect failure
+    if "msg" in result:
+        raise AnsibleRunError(result["msg"])
+    return result
 
 
 def create_example_email_and_password() -> Tuple[str, str]:
