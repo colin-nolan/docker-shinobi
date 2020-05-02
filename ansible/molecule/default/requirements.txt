@@ -1,9 +1,0 @@
-molecule[docker]
-yamllint
-ansible-lint
-flake8
-pytest
-
-testinfra
-takeltest==0.2.0
-shinobi-client>=2.0.1

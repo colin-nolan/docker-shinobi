@@ -1,8 +1,0 @@
----
-
-- name: Converge
-  hosts: all
-  roles:
-    - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
-  vars_files:
-    - testvars.yml
