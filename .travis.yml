@@ -1,9 +1,14 @@
 ---
 
-language: minimal
+language: python
+python:
+  - 3.8
 
 services:
   - docker
 
+install:
+  - pip install -r test-requirements.txt
+
 script:
-  - docker-compose up
+  - ./tests/test-starts.sh
