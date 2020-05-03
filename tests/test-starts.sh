@@ -3,6 +3,7 @@
 set -euf -o pipefail
 
 function tear_down() {
+    >&2 echo "Cleaning up temp directory"
     # Note: the files get writen as the root user in the container so removing the temp directory content in a container
     #       as root
     docker run --rm -v "${temp_directory}:/data" alpine sh -c 'rm -rf /data/*'
