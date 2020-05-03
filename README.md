@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/colin-nolan/docker-shinobi.svg?branch=master)](https://travis-ci.org/colin-nolan/docker-shinobi)
+[![Build Status](https://travis-ci.com/colin-nolan/docker-shinobi.svg?branch=master)](https://travis-ci.com/colin-nolan/docker-shinobi)
 # Dockerised Shinobi
 _Dockerised installation of [Shinobi](https://gitlab.com/Shinobi-Systems/Shinobi) (an open-source video management 
 solution)._
@@ -6,7 +6,7 @@ solution)._
 
 ## Requirements
 - Docker and Docker Compose.
-- Works on RPi (with some configuration changes).
+- Works on Raspberry Pi (with some configuration changes).
 
 
 ## Setup
@@ -32,7 +32,7 @@ env \
 ```
 _Note: on a Mac, the above will result in error 
 [due to an issue bind mounting time related files from /etc](https://github.com/docker/for-mac/issues/2396). 
-To quickly get around this, set the environment variables: `SHINOBI_LOCALTIME=/dev/null SHINOBI_TIMEZONE=/dev/null`_
+To quickly get around this, set the environment variables: `SHINOBI_LOCALTIME=/dev/null SHINOBI_TIMEZONE=/dev/null`._
 
 Once the installation is going, [jump into the super user interface (using the credentials defined above) and create a 
 user: http://localhost:8080/super](http://localhost:8080/super).
@@ -64,5 +64,6 @@ The setup will work on a Raspberry Pi with a few configuration adjustments.
 ## Legal
 [AGPL v3.0](LICENSE). Copyright 2019, 2020 Colin Nolan.
 
-I am not affiliated to the development of Shinobi project in any way. This work is in no way related to the company that
-I work for.
+I am not affiliated to the development of Shinobi project in any way. 
+
+This work is in no way related to the company that I work for.
