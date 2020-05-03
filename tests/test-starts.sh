@@ -8,7 +8,8 @@ if [[ "${temp_directory}" =~ ^/var ]]; then
     mv "${temp_directory}" /tmp
     temp_directory="/tmp/$(basename "${temp_directory}")"
 fi
-trap 'rm -rf "${temp_directory}"' EXIT
+# Note: the files get writeen as the root user in the container so if not running tests as root, the rm will fail
+trap 'rm -rf "${temp_directory}" || exit 0' EXIT
 
 env \
       SHINOBI_SUPER_USER_EMAIL=example@localhost \
@@ -19,7 +20,7 @@ env \
       SHINOBI_VIDEO_LOCATION="${temp_directory}/shinobi-data/videos" \
       SHINOBI_DATA_LOCATION="${temp_directory}/shinobi-data/database" \
       SHINOBI_LOCALTIME=/dev/null SHINOBI_TIMEZONE=/dev/null \
-    docker-compose up &
+    docker-compose up --build &
 
 wait-for-it \
         --service 0.0.0.0:8080 \
