@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/colin-nolan/docker-shinobi.svg?branch=master)](https://travis-ci.org/colin-nolan/docker-shinobi)
 # Dockerised Shinobi
 _Dockerised installation of [Shinobi](https://gitlab.com/Shinobi-Systems/Shinobi) (an open-source video management 
 solution)._
