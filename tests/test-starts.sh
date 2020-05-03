@@ -2,14 +2,20 @@
 
 set -euf -o pipefail
 
-temp_directory=$(mktemp -d -t "shinobi-data.XXXXXXXXX")
+function tear_down() {
+    # Note: the files get writen as the root user in the container so removing the temp directory content in a container
+    #       as root
+    docker run --rm -v "${temp_directory}:/data" alpine sh -c 'rm -rf /data/*'
+    rm -rf "${temp_directory}"
+}
+
+temp_directory=$(mktemp -d -t "shinobi-data.XXXXX")
 if [[ "${temp_directory}" =~ ^/var ]]; then
     # Mac creates temp directories in /var, which then can't be mounted...
     mv "${temp_directory}" /tmp
     temp_directory="/tmp/$(basename "${temp_directory}")"
 fi
-# Note: the files get writeen as the root user in the container so if not running tests as root, the rm will fail
-trap 'rm -rf "${temp_directory}" || exit 0' EXIT
+trap tear_down EXIT
 
 env \
       SHINOBI_SUPER_USER_EMAIL=example@localhost \
