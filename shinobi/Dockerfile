@@ -25,8 +25,12 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
 
 ARG SHINOBI_REPOSITORY_URL=https://gitlab.com/Shinobi-Systems/Shinobi.git
 ARG SHINOBI_REPOSITORY_BRANCH=master
-RUN git clone --depth=1 --branch="${SHINOBI_REPOSITORY_BRANCH}" "${SHINOBI_REPOSITORY_URL}" "${SHINOBI_INSTALL_DIRECTORY}" \
+ARG SHINOBI_REPOSITORY_COMMIT
+RUN git clone --branch="${SHINOBI_REPOSITORY_BRANCH}" "${SHINOBI_REPOSITORY_URL}" "${SHINOBI_INSTALL_DIRECTORY}" \
     && cd "${SHINOBI_INSTALL_DIRECTORY}" \
+    && if [ "${SHINOBI_REPOSITORY_COMMIT}" != "" ]; then \
+           git checkout "${SHINOBI_REPOSITORY_COMMIT}"; \
+       fi \
     && npm install
 
 COPY generate-config.py "${DOCKER_SHINOBI_INSTALL_DIRECTORY}/"
