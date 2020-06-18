@@ -10,6 +10,7 @@ services:
         BASE_IMAGE_WITH_FFMPEG: "${SHINOBI_BASE_IMAGE:-colinnolan/ffmpeg}"
         SHINOBI_REPOSITORY_URL: "${SHINOBI_REPOSITORY_URL:-https://gitlab.com/Shinobi-Systems/Shinobi.git}"
         SHINOBI_REPOSITORY_BRANCH: "${SHINOBI_REPOSITORY_BRANCH:-master}"
+        SHINOBI_REPOSITORY_COMMIT: "${SHINOBI_REPOSITORY_COMMIT:-}"
     image: shinobi
     restart: always
     volumes:
@@ -48,6 +49,9 @@ services:
       context: ./database
       args:
         BASE_IMAGE: "${DATABASE_BASE_IMAGE:-mariadb}"
+        SHINOBI_REPOSITORY_URL: "${SHINOBI_REPOSITORY_URL:-https://gitlab.com/Shinobi-Systems/Shinobi.git}"
+        SHINOBI_REPOSITORY_BRANCH: "${SHINOBI_REPOSITORY_BRANCH:-master}"
+        SHINOBI_REPOSITORY_COMMIT: "${SHINOBI_REPOSITORY_COMMIT:-}"
     image: shinobi-database
     restart: always
     volumes:
