@@ -58,11 +58,11 @@ The setup will work on a Raspberry Pi with a few configuration adjustments.
 
 ## Related
 - [Ansible Shinobi setup](https://github.com/colin-nolan/ansible-shinobi).
-- [Shinobi Pythion client](https://github.com/colin-nolan/python-shinobi).
+- [Shinobi Python client](https://github.com/colin-nolan/python-shinobi).
 
 
 ## Legal
-[AGPL v3.0](LICENSE). Copyright 2019, 2020 Colin Nolan.
+[AGPL v3.0](LICENSE). Copyright 2019, 2020, 2021 Colin Nolan.
 
 I am not affiliated to the development of Shinobi project in any way. 
 
