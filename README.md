@@ -1,3 +1,5 @@
+# No longer maintained as I have moved to using [Home Assistant](https://www.home-assistant.io/).
+
 [![Build Status](https://travis-ci.com/colin-nolan/docker-shinobi.svg?branch=master)](https://travis-ci.com/colin-nolan/docker-shinobi)
 # Dockerised Shinobi
 _Dockerised installation of [Shinobi](https://gitlab.com/Shinobi-Systems/Shinobi) (an open-source video management 
