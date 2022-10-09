@@ -1,4 +1,4 @@
-# No longer maintained as I have moved to using [Home Assistant](https://www.home-assistant.io/).
+# No longer maintained, as I have moved to using [Home Assistant](https://www.home-assistant.io/).
 
 [![Build Status](https://travis-ci.com/colin-nolan/docker-shinobi.svg?branch=master)](https://travis-ci.com/colin-nolan/docker-shinobi)
 # Dockerised Shinobi
